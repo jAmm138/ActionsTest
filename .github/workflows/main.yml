@@ -1,0 +1,35 @@
+name: Nightly Selenium Test with Maven
+
+on:
+  workflow_dispatch:
+    inputs:
+      #variables
+      browser:
+        type: choice
+        required: true
+        description: What browser should be used for test execution?
+        default: Chrome
+        options:
+        - Chrome
+        - Firefox
+      url:
+        required: true
+        description: Which URL will be used?
+        default: 'https://www.swtestacademy.com'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v5
+
+    - name: Setup JDK
+      uses: actions/setup-java@v5
+      with:
+        distribution: 'temurin'
+        java-version: '21'
+
+    - name: Build and test with Maven
+      run: mvn -B clean test -Dbrowser=${{ github.event.inputs.browser }} -Durl=${{ github.event.inputs.url }}
